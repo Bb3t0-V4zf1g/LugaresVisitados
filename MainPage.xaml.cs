@@ -34,7 +34,8 @@ namespace LugaresVisitados
                 var lugares = await _httpClient.GetFromJsonAsync<List<Lugar>>("lugares");
                 Lugares = lugares ?? new List<Lugar>();
                 LugaresOriginal = new List<Lugar>(Lugares);
-                lugaresListView.ItemsSource = Lugares;
+                lugaresCollectionView.ItemsSource = Lugares;
+
             }
             catch (Exception ex)
             {
@@ -66,8 +67,8 @@ namespace LugaresVisitados
             if (response.IsSuccessStatusCode)
             {
                 Lugares.Remove(lugar);
-                lugaresListView.ItemsSource = null;
-                lugaresListView.ItemsSource = Lugares;
+                lugaresCollectionView.ItemsSource = null;
+                lugaresCollectionView.ItemsSource = Lugares;
                 LugaresOriginal = new List<Lugar>(Lugares);
             }
             else
@@ -82,8 +83,8 @@ namespace LugaresVisitados
             Lugares = LugaresOriginal
                         .Where(l => l.Nombre.ToLower().Contains(filtro))
                         .ToList();
-            lugaresListView.ItemsSource = null;
-            lugaresListView.ItemsSource = Lugares;
+            lugaresCollectionView.ItemsSource = null;
+            lugaresCollectionView.ItemsSource = Lugares;
         }
     }
 }
