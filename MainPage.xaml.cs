@@ -13,18 +13,16 @@ namespace LugaresVisitados
     public partial class MainPage : ContentPage
     {
         private readonly HttpClient _httpClient;
-        public List<Lugar> Lugares { get; set; }
-        private List<Lugar> LugaresOriginal { get; set; }
+        public List<Lugar> Lugares { get; set; } = new List<Lugar>();
+        private List<Lugar> LugaresOriginal { get; set; } = new List<Lugar>();
 
         public MainPage()
         {
             InitializeComponent();
-
             _httpClient = new HttpClient
             {
                 BaseAddress = new Uri("https://dx2hgfq2-3000.usw3.devtunnels.ms/")
             };
-
             CargarLugares();
         }
 
@@ -32,16 +30,36 @@ namespace LugaresVisitados
         {
             try
             {
-                // Ruta del archivo JSON (asegúrate de que está en Resources/Raw/lugares.json)
-                using var stream = await FileSystem.OpenAppPackageFileAsync("lugares.json");
-                using var reader = new StreamReader(stream);
-                var json = await reader.ReadToEndAsync();
+                // Cargar desde la API en lugar del archivo JSON
+                var response = await _httpClient.GetAsync("lugares");
 
-                // Deserializamos
-                var lugares = JsonSerializer.Deserialize<List<Lugar>>(json);
+                if (response.IsSuccessStatusCode)
+                {
+                    var json = await response.Content.ReadAsStringAsync();
 
-                // Mostramos en el ListView
-                lugaresCollectionView.ItemsSource = lugares;
+                    // Configurar JsonSerializer para manejar propiedades en minúsculas
+                    var options = new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true,
+                        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+                    };
+
+                    var lugares = JsonSerializer.Deserialize<List<Lugar>>(json, options) ?? new List<Lugar>();
+
+                    Lugares = lugares;
+                    LugaresOriginal = new List<Lugar>(lugares); // Crear copia para búsquedas
+
+                    // Actualizar la vista
+                    lugaresCollectionView.ItemsSource = Lugares;
+                }
+                else
+                {
+                    await DisplayAlert("Error", $"Error del servidor: {response.StatusCode}", "OK");
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                await DisplayAlert("Error de conexión", $"No se pudo conectar al servidor: {ex.Message}", "OK");
             }
             catch (Exception ex)
             {
@@ -69,28 +87,53 @@ namespace LugaresVisitados
             bool confirm = await DisplayAlert("Confirmar", $"¿Eliminar {lugar.Nombre}?", "Sí", "No");
             if (!confirm) return;
 
-            var response = await _httpClient.DeleteAsync($"lugares/{lugar.Id}");
-            if (response.IsSuccessStatusCode)
+            try
             {
-                Lugares.Remove(lugar);
-                lugaresCollectionView.ItemsSource = null;
-                lugaresCollectionView.ItemsSource = Lugares;
-                LugaresOriginal = new List<Lugar>(Lugares);
+                // Usar la ruta GET de eliminación que tienes en tu servidor
+                var response = await _httpClient.GetAsync($"eliminar?id={lugar.Id}");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    // Recargar los datos después de eliminar
+                    await CargarLugares();
+                    await DisplayAlert("Éxito", "Lugar eliminado correctamente", "OK");
+                }
+                else
+                {
+                    await DisplayAlert("Error", "No se pudo eliminar el lugar", "OK");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                await DisplayAlert("Error", "No se pudo eliminar el lugar", "OK");
+                await DisplayAlert("Error", $"Error al eliminar: {ex.Message}", "OK");
             }
         }
 
         private void SearchBar_TextChanged(object sender, TextChangedEventArgs e)
         {
             string filtro = searchBar.Text?.ToLower() ?? "";
-            Lugares = LugaresOriginal
-                        .Where(l => l.Nombre.ToLower().Contains(filtro))
-                        .ToList();
-            lugaresCollectionView.ItemsSource = null;
-            lugaresCollectionView.ItemsSource = Lugares;
+
+            if (string.IsNullOrEmpty(filtro))
+            {
+                // Si no hay filtro, mostrar todos los lugares
+                lugaresCollectionView.ItemsSource = LugaresOriginal;
+            }
+            else
+            {
+                // Filtrar los lugares
+                var lugaresFiltrados = LugaresOriginal
+                    .Where(l => l.Nombre?.ToLower().Contains(filtro) == true)
+                    .ToList();
+
+                lugaresCollectionView.ItemsSource = lugaresFiltrados;
+            }
+        }
+
+        // Método para refrescar los datos (útil cuando vuelves de agregar/editar)
+        protected override async void OnAppearing()
+        {
+            base.OnAppearing();
+            await CargarLugares();
         }
     }
 }
