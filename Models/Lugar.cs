@@ -1,18 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
+using System;
+using System.Text.Json.Serialization;
 
 namespace LugaresVisitados.Models
 {
     public class Lugar
     {
+        [JsonPropertyName("id")]
         public int Id { get; set; }
-        public string Nombre { get; set; }
-        public string Descripcion { get; set; }
+
+        [JsonPropertyName("nombre")]
+        public string Nombre { get; set; } = string.Empty;
+
+        [JsonPropertyName("descripcion")]
+        public string Descripcion { get; set; } = string.Empty;
+
+        [JsonPropertyName("fecha_visita")]
         public DateTime FechaVisita { get; set; }
-        public string ImagenUrl { get; set; }
+
+        [JsonPropertyName("URL_lugar")]
+        public string ImagenUrl { get; set; } = string.Empty;
+
+        // Propiedades calculadas o adicionales si las necesitas
+        public string FechaVisitaFormateada => FechaVisita.ToString("dd/MM/yyyy");
     }
 }
