@@ -6,9 +6,11 @@
     xmlns:local="clr-namespace:LugaresVisitados"
     Title="LugaresVisitados">
 
-    <ShellContent
-        Title="Home"
-        ContentTemplate="{DataTemplate local:MainPage}"
-        Route="MainPage" />
+    <ShellContent Title="Inicio" ContentTemplate="{DataTemplate local:MainPage}" />
+
+    <!-- Páginas de navegación -->
+    <ShellContent Route="agregar" ContentTemplate="{DataTemplate local:AgregarLugar}" />
+    <ShellContent Route="editar" ContentTemplate="{DataTemplate local:EditarLugar}" />
+
 
 </Shell>
