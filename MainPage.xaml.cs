@@ -1,11 +1,12 @@
 using LugaresVisitados.Models;
+using Microsoft.Maui.Controls;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
+using System.Text.Json;
 using System.Threading.Tasks;
-using Microsoft.Maui.Controls;
 
 namespace LugaresVisitados
 {
@@ -31,11 +32,16 @@ namespace LugaresVisitados
         {
             try
             {
-                var lugares = await _httpClient.GetFromJsonAsync<List<Lugar>>("lugares");
-                Lugares = lugares ?? new List<Lugar>();
-                LugaresOriginal = new List<Lugar>(Lugares);
-                lugaresCollectionView.ItemsSource = Lugares;
+                // Ruta del archivo JSON (asegúrate de que está en Resources/Raw/lugares.json)
+                using var stream = await FileSystem.OpenAppPackageFileAsync("lugares.json");
+                using var reader = new StreamReader(stream);
+                var json = await reader.ReadToEndAsync();
 
+                // Deserializamos
+                var lugares = JsonSerializer.Deserialize<List<Lugar>>(json);
+
+                // Mostramos en el ListView
+                lugaresCollectionView.ItemsSource = lugares;
             }
             catch (Exception ex)
             {
