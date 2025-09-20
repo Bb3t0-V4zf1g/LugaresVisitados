@@ -1,13 +1,17 @@
-﻿using LugaresVisitados.Models;
+using LugaresVisitados.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Json;
+using System.Threading.Tasks;
 using Microsoft.Maui.Controls;
 
 namespace LugaresVisitados
 {
     public partial class MainPage : ContentPage
     {
+        private readonly HttpClient _httpClient;
         public List<Lugar> Lugares { get; set; }
         private List<Lugar> LugaresOriginal { get; set; }
 
@@ -15,17 +19,27 @@ namespace LugaresVisitados
         {
             InitializeComponent();
 
-            // Datos de prueba inyectados
-            Lugares = new List<Lugar>
+            _httpClient = new HttpClient
             {
-                new Lugar { Id=1, Nombre="Tokyo", Descripcion="Recorrido por Shibuya y Asakusa", FechaVisita=DateTime.Now, ImagenUrl="https://www.gotokyo.org/es/plan/tokyo-outline/images/main_pxfree.webp" },
-                new Lugar { Id=2, Nombre="Jalisco", Descripcion="Visita al centro de Guadalajara y Tequila", FechaVisita=DateTime.Now, ImagenUrl="https://imagenes.eleconomista.com.mx/files/image_768_768/uploads/2022/11/01/66e48e17c5cad.jpeg" },
-                new Lugar { Id=3, Nombre="New Mexico", Descripcion="Exploración de los Badlands y naturaleza", FechaVisita=DateTime.Now, ImagenUrl="https://www.travelandleisure.com/thmb/aCoWceoIsbVI7oxWhKsprMbgZbE=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/1-74b48a357f69462c8a5725a82f28cd9c.jpg" }
+                BaseAddress = new Uri("https://dx2hgfq2-3000.usw3.devtunnels.ms/")
             };
 
-            LugaresOriginal = new List<Lugar>(Lugares);
+            CargarLugares();
+        }
 
-            BindingContext = this;
+        private async Task CargarLugares()
+        {
+            try
+            {
+                var lugares = await _httpClient.GetFromJsonAsync<List<Lugar>>("lugares");
+                Lugares = lugares ?? new List<Lugar>();
+                LugaresOriginal = new List<Lugar>(Lugares);
+                lugaresListView.ItemsSource = Lugares;
+            }
+            catch (Exception ex)
+            {
+                await DisplayAlert("Error", $"No se pudieron cargar los lugares: {ex.Message}", "OK");
+            }
         }
 
         private async void AgregarLugar_Clicked(object sender, EventArgs e)
@@ -36,21 +50,30 @@ namespace LugaresVisitados
         private async void EditarLugar_Clicked(object sender, EventArgs e)
         {
             var boton = (Button)sender;
-            var lugar = (Lugar)boton.CommandParameter;
-            // Pasar datos si quieres, ejemplo:
-            // await Shell.Current.GoToAsync($"editar?id={lugar.Id}");
-            await Shell.Current.GoToAsync("editar");
+            var lugar = (Lugar)boton.BindingContext;
+            await Shell.Current.GoToAsync($"editar?id={lugar.Id}");
         }
 
-        private void EliminarLugar_Clicked(object sender, EventArgs e)
+        private async void EliminarLugar_Clicked(object sender, EventArgs e)
         {
             var boton = (Button)sender;
-            var lugar = (Lugar)boton.CommandParameter;
+            var lugar = (Lugar)boton.BindingContext;
 
-            Lugares.Remove(lugar);
-            lugaresCollectionView.ItemsSource = null;
-            lugaresCollectionView.ItemsSource = Lugares;
-            LugaresOriginal = new List<Lugar>(Lugares);
+            bool confirm = await DisplayAlert("Confirmar", $"¿Eliminar {lugar.Nombre}?", "Sí", "No");
+            if (!confirm) return;
+
+            var response = await _httpClient.DeleteAsync($"lugares/{lugar.Id}");
+            if (response.IsSuccessStatusCode)
+            {
+                Lugares.Remove(lugar);
+                lugaresListView.ItemsSource = null;
+                lugaresListView.ItemsSource = Lugares;
+                LugaresOriginal = new List<Lugar>(Lugares);
+            }
+            else
+            {
+                await DisplayAlert("Error", "No se pudo eliminar el lugar", "OK");
+            }
         }
 
         private void SearchBar_TextChanged(object sender, TextChangedEventArgs e)
@@ -59,9 +82,8 @@ namespace LugaresVisitados
             Lugares = LugaresOriginal
                         .Where(l => l.Nombre.ToLower().Contains(filtro))
                         .ToList();
-
-            lugaresCollectionView.ItemsSource = null;
-            lugaresCollectionView.ItemsSource = Lugares;
+            lugaresListView.ItemsSource = null;
+            lugaresListView.ItemsSource = Lugares;
         }
     }
 }
