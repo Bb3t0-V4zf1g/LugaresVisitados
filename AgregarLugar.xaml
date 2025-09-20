@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="LugaresVisitados.AgregarLugar"
+             Title="Agregar Lugar">
+    <ScrollView>
+        <VerticalStackLayout Padding="15" Spacing="10">
+            <Label Text="Nombre del lugar:" FontAttributes="Bold"/>
+            <Entry x:Name="nombre" Keyboard="Text" Placeholder="Ingrese el nombre del lugar"/>
+
+            <Label Text="Descripción:" FontAttributes="Bold"/>
+            <Editor x:Name="descripcion" HeightRequest="100" 
+                   Placeholder="Describa el lugar visitado" AutoSize="TextChanges"/>
+
+            <Label Text="Fecha de visita:" FontAttributes="Bold"/>
+            <DatePicker x:Name="fechaVisita"/>
+
+            <Label Text="URL de la imagen:" FontAttributes="Bold"/>
+            <Entry x:Name="imagenUrl" Keyboard="Url" Placeholder="https://ejemplo.com/imagen.jpg"/>
+
+            <Button Text="Guardar" Clicked="Button_Clicked" CornerRadius="15"
+                    BackgroundColor="#2196F3" TextColor="White" Margin="0,20,0,0"/>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>
