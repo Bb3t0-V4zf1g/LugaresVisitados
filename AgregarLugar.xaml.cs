@@ -1,13 +1,8 @@
-using System.Collections.ObjectModel;
-using System.Net.Http;
-using Newtonsoft.Json;
-using LugaresVisitados.Models;
-
 namespace LugaresVisitados
 {
     public partial class AgregarLugar : ContentPage
     {
-        HttpClient cliente = new HttpClient { BaseAddress = new Uri("https://1dxpc21h-3000.usw3.devtunnels.ms/") };
+        HttpClient cliente = new HttpClient { BaseAddress = new Uri("https://md1w2gfx-3000.usw3.devtunnels.ms/") };
 
         public AgregarLugar()
         {

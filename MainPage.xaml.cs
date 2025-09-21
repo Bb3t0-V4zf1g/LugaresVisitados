@@ -1,12 +1,5 @@
 ﻿using LugaresVisitados.Models;
-using Microsoft.Maui.Controls;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Net.Http.Json;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace LugaresVisitados
 {
@@ -21,7 +14,7 @@ namespace LugaresVisitados
             InitializeComponent();
             _httpClient = new HttpClient
             {
-                BaseAddress = new Uri("https://1dxpc21h-3000.usw3.devtunnels.ms/")
+                BaseAddress = new Uri("https://md1w2gfx-3000.usw3.devtunnels.ms/")
             };
             CargarLugares();
         }

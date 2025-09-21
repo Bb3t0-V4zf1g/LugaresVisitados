@@ -20,7 +20,12 @@
                 <DataTemplate>
                     <Frame BorderColor="Gray" CornerRadius="10" Padding="10" Margin="5">
                         <StackLayout>
-                            <Image Source="{Binding ImagenUrl}" HeightRequest="150" Aspect="AspectFill"/>
+                            <!-- Imagen simple -->
+                            <Image Source="{Binding ImagenUrl}" 
+                                   HeightRequest="150"
+                                   Aspect="AspectFill"
+                                   BackgroundColor="LightGray"/>
+                            
                             <Label Text="{Binding Nombre}" FontAttributes="Bold" FontSize="18"/>
                             <Label Text="{Binding Descripcion}" FontSize="14"/>
                             <Label Text="{Binding FechaVisita, StringFormat='Fecha: {0:dd/MM/yyyy}'}" FontSize="12" TextColor="Gray"/>

@@ -1,10 +1,6 @@
 using LugaresVisitados.Models;
-using Microsoft.Maui.Controls;
-using System;
-using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace LugaresVisitados
 {
@@ -12,7 +8,7 @@ namespace LugaresVisitados
     public partial class EditarLugar : ContentPage
     {
         private readonly HttpClient _httpClient;
-        private Lugar _lugar;
+        private Lugar lugarEditar;
 
         public string Id { get; set; }
 
@@ -21,7 +17,7 @@ namespace LugaresVisitados
             InitializeComponent();
             _httpClient = new HttpClient
             {
-                BaseAddress = new Uri("https://1dxpc21h-3000.usw3.devtunnels.ms/")
+                BaseAddress = new Uri("https://md1w2gfx-3000.usw3.devtunnels.ms/")
             };
         }
 
@@ -49,15 +45,15 @@ namespace LugaresVisitados
                         PropertyNamingPolicy = JsonNamingPolicy.CamelCase
                     };
 
-                    _lugar = JsonSerializer.Deserialize<Lugar>(json, options);
+                    lugarEditar = JsonSerializer.Deserialize<Lugar>(json, options);
 
-                    if (_lugar != null)
+                    if (lugarEditar != null)
                     {
-                        nombreEntry.Text = _lugar.Nombre;
-                        descripcionEditor.Text = _lugar.Descripcion;
-                        fechaVisitaPicker.Date = _lugar.FechaVisita;
-                        imagenUrlEntry.Text = _lugar.ImagenUrl;
-                        previewImagen.Source = _lugar.ImagenUrl;
+                        nombreEntry.Text = lugarEditar.Nombre;
+                        descripcionEntry.Text = lugarEditar.Descripcion;
+                        fechaVisitaPicker.Date = lugarEditar.FechaVisita;
+                        imagenUrlEntry.Text = lugarEditar.ImagenUrl;
+                        previewImagen.Source = lugarEditar.ImagenUrl;
                     }
                 }
                 else
@@ -73,16 +69,16 @@ namespace LugaresVisitados
 
         private async void Guardar_Clicked(object sender, EventArgs e)
         {
-            if (_lugar == null) return;
+            if (lugarEditar == null) return;
 
-            _lugar.Nombre = nombreEntry.Text;
-            _lugar.Descripcion = descripcionEditor.Text;
-            _lugar.FechaVisita = fechaVisitaPicker.Date;
-            _lugar.ImagenUrl = imagenUrlEntry.Text;
+            lugarEditar.Nombre = nombreEntry.Text;
+            lugarEditar.Descripcion = descripcionEntry.Text;
+            lugarEditar.FechaVisita = fechaVisitaPicker.Date;
+            lugarEditar.ImagenUrl = imagenUrlEntry.Text;
 
             try
             {
-                var response = await _httpClient.PostAsJsonAsync("editar", _lugar);
+                var response = await _httpClient.PostAsJsonAsync("editar", lugarEditar);
 
                 if (response.IsSuccessStatusCode)
                 {

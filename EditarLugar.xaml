@@ -7,13 +7,14 @@
     <ScrollView Padding="20">
         <VerticalStackLayout Spacing="15">
 
-            <Entry x:Name="nombreEntry"
-                   Placeholder="Nombre del lugar" />
+            <Entry x:Name="nombreEntry" 
+                   Placeholder="Nombre"
+                   HeightRequest="100"/>
 
-            <Editor x:Name="descripcionEditor"
-                    Placeholder="Descripción"
-                    AutoSize="TextChanges"
-                    HeightRequest="100"/>
+
+            <Entry x:Name="descripcionEntry" 
+                   Placeholder="Descripción"
+                   HeightRequest="100"/>
 
             <DatePicker x:Name="fechaVisitaPicker" />
 
