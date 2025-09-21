@@ -1,4 +1,4 @@
-﻿using LugaresVisitados.Models;
+using LugaresVisitados.Models;
 using System.Text.Json;
 
 namespace LugaresVisitados
@@ -15,6 +15,7 @@ namespace LugaresVisitados
             _httpClient = new HttpClient
             {
                 BaseAddress = new Uri("https://md1w2gfx-3000.usw3.devtunnels.ms/")
+
             };
             CargarLugares();
         }

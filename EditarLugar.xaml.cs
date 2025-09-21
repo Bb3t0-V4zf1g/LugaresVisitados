@@ -1,3 +1,4 @@
+
 using LugaresVisitados.Models;
 using System.Net.Http.Json;
 using System.Text.Json;
@@ -82,8 +83,8 @@ namespace LugaresVisitados
 
                 if (response.IsSuccessStatusCode)
                 {
-                    await DisplayAlert("Éxito", "Lugar actualizado correctamente", "OK");
-                    await Shell.Current.GoToAsync(".."); // volver a la página anterior
+                    await DisplayAlert("ï¿½xito", "Lugar actualizado correctamente", "OK");
+                    await Shell.Current.GoToAsync(".."); // volver a la pï¿½gina anterior
                 }
                 else
                 {
@@ -102,3 +103,4 @@ namespace LugaresVisitados
         }
     }
 }
+
