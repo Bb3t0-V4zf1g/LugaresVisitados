@@ -1,17 +1,11 @@
-
 using LugaresVisitados.Models;
 using System.Net.Http.Json;
-using System.Text.Json;
 
 namespace LugaresVisitados
 {
-    [QueryProperty(nameof(Id), "id")]
-    public partial class EditarLugar : ContentPage
+    public partial class EditarLugar : ContentPage, IQueryAttributable
     {
         private readonly HttpClient _httpClient;
-        private Lugar lugarEditar;
-
-        public string Id { get; set; }
 
         public EditarLugar()
         {
@@ -22,69 +16,68 @@ namespace LugaresVisitados
             };
         }
 
-        protected override async void OnAppearing()
+        public int lugarId;
+
+        public void ApplyQueryAttributes(IDictionary<string, object> query)
         {
-            base.OnAppearing();
-            if (!string.IsNullOrEmpty(Id))
+            if (query.ContainsKey("id"))
             {
-                await CargarLugar(int.Parse(Id));
+                 lugarId = Convert.ToInt32(query["id"]);
             }
-        }
 
-        private async Task CargarLugar(int id)
-        {
-            try
+            if(query.ContainsKey("nombre"))
             {
-                var response = await _httpClient.GetAsync($"lugares/{id}");
-                if (response.IsSuccessStatusCode)
+                nombreEntry.Text = query["nombre"]?.ToString();
+            }
+
+            if (query.ContainsKey("descripcion"))
+            {
+                descripcionEntry.Text = query["descripcion"]?.ToString();
+            }
+
+            if (query.ContainsKey("fechaVisita"))
+            {
+                if (DateTime.TryParse(query["fechaVisita"]?.ToString(), out DateTime fecha))
                 {
-                    var json = await response.Content.ReadAsStringAsync();
-
-                    var options = new JsonSerializerOptions
-                    {
-                        PropertyNameCaseInsensitive = true,
-                        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-                    };
-
-                    lugarEditar = JsonSerializer.Deserialize<Lugar>(json, options);
-
-                    if (lugarEditar != null)
-                    {
-                        nombreEntry.Text = lugarEditar.Nombre;
-                        descripcionEntry.Text = lugarEditar.Descripcion;
-                        fechaVisitaPicker.Date = lugarEditar.FechaVisita;
-                        imagenUrlEntry.Text = lugarEditar.ImagenUrl;
-                        previewImagen.Source = lugarEditar.ImagenUrl;
-                    }
-                }
-                else
-                {
-                    await DisplayAlert("Error", "No se pudo cargar el lugar", "OK");
+                    fechaVisitaPicker.Date = fecha;
                 }
             }
-            catch (Exception ex)
+
+            if (query.ContainsKey("imagenUrl"))
             {
-                await DisplayAlert("Error", ex.Message, "OK");
+                imagenUrlEntry.Text = query["imagenUrl"]?.ToString();
             }
+
         }
+
 
         private async void Guardar_Clicked(object sender, EventArgs e)
-        {
-            if (lugarEditar == null) return;
-
-            lugarEditar.Nombre = nombreEntry.Text;
-            lugarEditar.Descripcion = descripcionEntry.Text;
-            lugarEditar.FechaVisita = fechaVisitaPicker.Date;
-            lugarEditar.ImagenUrl = imagenUrlEntry.Text;
-
+        { 
             try
             {
-                var response = await _httpClient.PostAsJsonAsync("editar", lugarEditar);
+
+                if(string.IsNullOrWhiteSpace(nombreEntry.Text) ||
+                    string.IsNullOrWhiteSpace(descripcionEntry.Text) ||
+                    string.IsNullOrWhiteSpace(imagenUrlEntry.Text))
+                {
+                    await DisplayAlert("Error", "Todos los campos son obligatorios", "OK");
+                    return;
+                }
+                if(fechaVisitaPicker.Date > DateTime.Today)
+                {
+                    await DisplayAlert("Error", "La fecha de visita no puede ser posterior a hoy.", "OK");
+                    return;
+                }
+                var response = await _httpClient.GetAsync($"editar?id={lugarId}" +
+                    $"&nombre={Uri.EscapeDataString(nombreEntry.Text)}" +
+                    $"&descripcion={Uri.EscapeDataString(descripcionEntry.Text)}" +
+                    $"&fecha_visita={fechaVisitaPicker.Date:yyyy-MM-dd}" +
+                    $"&URL_lugar={Uri.EscapeDataString(imagenUrlEntry.Text)}");
 
                 if (response.IsSuccessStatusCode)
                 {
-                    await DisplayAlert("�xito", "Lugar actualizado correctamente", "OK");
-                    await Shell.Current.GoToAsync(".."); // volver a la p�gina anterior
+                    await DisplayAlert("Éxito", "Lugar actualizado correctamente", "OK");
+                    await Shell.Current.GoToAsync("..");
                 }
                 else
                 {

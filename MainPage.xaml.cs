@@ -7,7 +7,6 @@ namespace LugaresVisitados
     {
         private readonly HttpClient _httpClient;
         public List<Lugar> Lugares { get; set; } = new List<Lugar>();
-        private List<Lugar> LugaresOriginal { get; set; } = new List<Lugar>();
 
         public MainPage()
         {
@@ -15,7 +14,6 @@ namespace LugaresVisitados
             _httpClient = new HttpClient
             {
                 BaseAddress = new Uri("https://md1w2gfx-3000.usw3.devtunnels.ms/")
-
             };
             CargarLugares();
         }
@@ -41,10 +39,21 @@ namespace LugaresVisitados
                     var lugares = JsonSerializer.Deserialize<List<Lugar>>(json, options) ?? new List<Lugar>();
 
                     Lugares = lugares;
-                    LugaresOriginal = new List<Lugar>(lugares); // Crear copia para búsquedas
 
-                    // Actualizar la vista
-                    lugaresCollectionView.ItemsSource = Lugares;
+                    // Limpiar caché y forzar actualización
+                    lugaresCollectionView.ItemsSource = null;
+                    
+                    // Verificar si hay filtro activo en la barra de búsqueda
+                    if (!string.IsNullOrEmpty(searchBar.Text))
+                    {
+                        // Si hay filtro, aplicarlo
+                        SearchBar_TextChanged(searchBar, new TextChangedEventArgs(searchBar.Text, searchBar.Text));
+                    }
+                    else
+                    {
+                        // Si no hay filtro, mostrar todos los lugares
+                        lugaresCollectionView.ItemsSource = Lugares;
+                    }
                 }
                 else
                 {
@@ -70,7 +79,17 @@ namespace LugaresVisitados
         {
             var boton = (Button)sender;
             var lugar = (Lugar)boton.BindingContext;
-            await Shell.Current.GoToAsync($"editar?id={lugar.Id}");
+           
+            var parametros = new Dictionary<string, object>
+            {
+                ["id"] = lugar.Id.ToString(),
+                ["nombre"] = lugar.Nombre ?? "",
+                ["descripcion"] = lugar.Descripcion ?? "",
+                ["fechaVisita"] = lugar.FechaVisita.ToString("yyyy-MM-dd"),
+                ["imagenUrl"] = lugar.ImagenUrl ?? ""
+            };
+
+            await Shell.Current.GoToAsync("editar", parametros);
         }
 
         private async void EliminarLugar_Clicked(object sender, EventArgs e)
@@ -83,12 +102,10 @@ namespace LugaresVisitados
 
             try
             {
-                // Usar la ruta GET de eliminación que tienes en tu servidor
                 var response = await _httpClient.GetAsync($"eliminar?id={lugar.Id}");
 
                 if (response.IsSuccessStatusCode)
                 {
-                    // Recargar los datos después de eliminar
                     await CargarLugares();
                     await DisplayAlert("Éxito", "Lugar eliminado correctamente", "OK");
                 }
@@ -109,16 +126,18 @@ namespace LugaresVisitados
 
             if (string.IsNullOrEmpty(filtro))
             {
-                // Si no hay filtro, mostrar todos los lugares
-                lugaresCollectionView.ItemsSource = LugaresOriginal;
+                // Si no hay filtro, mostrar todos los lugares actualizados
+                lugaresCollectionView.ItemsSource = null;
+                lugaresCollectionView.ItemsSource = Lugares; // Usar Lugares, no LugaresOriginal
             }
             else
             {
-                // Filtrar los lugares
-                var lugaresFiltrados = LugaresOriginal
+                // Filtrar los lugares actualizados
+                var lugaresFiltrados = Lugares // Usar Lugares, no LugaresOriginal
                     .Where(l => l.Nombre?.ToLower().Contains(filtro) == true)
                     .ToList();
 
+                lugaresCollectionView.ItemsSource = null;
                 lugaresCollectionView.ItemsSource = lugaresFiltrados;
             }
         }
