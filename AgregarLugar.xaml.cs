@@ -1,13 +1,10 @@
-using System.Collections.ObjectModel;
-using System.Net.Http;
-using Newtonsoft.Json;
-using LugaresVisitados.Models;
-
 namespace LugaresVisitados
 {
     public partial class AgregarLugar : ContentPage
     {
-        HttpClient cliente = new HttpClient { BaseAddress = new Uri("https://1dxpc21h-3000.usw3.devtunnels.ms/") };
+
+        HttpClient cliente = new HttpClient { BaseAddress = new Uri("https://md1w2gfx-3000.usw3.devtunnels.ms/") };
+
 
         public AgregarLugar()
         {
@@ -30,7 +27,7 @@ namespace LugaresVisitados
                 return;
             }
 
-            // ValidaciÛn: no permitir fechas futuras
+            // Validaci√≥n: no permitir fechas futuras
             if (fechaVisitaDate > DateTime.Today)
             {
                 await DisplayAlert("Error", "La fecha de visita no puede ser posterior a hoy.", "OK");
@@ -39,7 +36,7 @@ namespace LugaresVisitados
 
             try
             {
-                // Construir la URL con par·metros GET (como en tu API Node.js)
+                // Construir la URL con par√°metros GET (como en tu API Node.js)
                 string url = $"agregar?nombre={Uri.EscapeDataString(nombreTxt)}" +
                             $"&descripcion={Uri.EscapeDataString(descripcionTxt)}" +
                             $"&fecha_visita={fechaVisitaDate:yyyy-MM-dd}" +
@@ -49,9 +46,9 @@ namespace LugaresVisitados
 
                 if (response.IsSuccessStatusCode)
                 {
-                    await DisplayAlert("…xito", "Lugar agregado correctamente", "OK");
+                    await DisplayAlert("√âxito", "Lugar agregado correctamente", "OK");
 
-                    // Volver a la p·gina anterior
+                    // Volver a la p√°gina anterior
                     await Shell.Current.GoToAsync("..");
                 }
                 else
