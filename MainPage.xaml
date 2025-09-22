@@ -2,51 +2,283 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="LugaresVisitados.MainPage"
-             Title="Lugares visitados">
+             BackgroundColor="#0F172A">
 
-    <Grid RowDefinitions="Auto,*,Auto" Padding="10">
+    <Grid RowDefinitions="Auto, Auto, *">
 
-        <!-- Barra de búsqueda -->
-        <SearchBar x:Name="searchBar"
-                   Placeholder="Buscar lugar..."
-                   TextChanged="SearchBar_TextChanged"
-                   Grid.Row="0"/>
+        <!-- ENCABEZADO PREMIUM CON GRADIENTE -->
+        <Frame Grid.Row="0" 
+               CornerRadius="0" 
+               Padding="20,10"
+               HeightRequest="90"
+               HasShadow="True"
+               BackgroundColor="#1E293B">
+            <Frame.Shadow>
+                <Shadow Brush="#000000" Offset="0,5" Opacity="0.3" Radius="10"/>
+            </Frame.Shadow>
 
-        <!-- Lista de lugares -->
-        <CollectionView x:Name="lugaresCollectionView"
-                        SelectionMode="None"
-                        Grid.Row="1">
-            <CollectionView.ItemTemplate>
-                <DataTemplate>
-                    <Frame BorderColor="Gray" CornerRadius="10" Padding="10" Margin="5">
-                        <StackLayout>
+            <Grid ColumnDefinitions="*, Auto" VerticalOptions="Center">
+                <StackLayout Orientation="Horizontal" Spacing="12" VerticalOptions="Center">
+                    <Label Text="🌎"
+                           FontSize="28"
+                           VerticalOptions="Center"/>
+                    <Label Text="TravelDiscover"
+                           FontSize="24"
+                           TextColor="White"
+                           FontAttributes="Bold"
+                           VerticalOptions="Center"/>
+                </StackLayout>
 
-                            <!-- Imagen simple -->
-                            <Image Source="{Binding ImagenUrl}" 
-                                   HeightRequest="150"
-                                   Aspect="AspectFill"
-                                   BackgroundColor="LightGray"/>
-                            
+                <Button Text="+ Nuevo"
+                        BackgroundColor="#6366F1"
+                        TextColor="White"
+                        CornerRadius="25"
+                        Padding="25,12"
+                        FontSize="14"
+                        FontAttributes="Bold"
+                        Clicked="AgregarLugar_Clicked"
+                        Grid.Column="1">
+                    <Button.Shadow>
+                        <Shadow Brush="#6366F1" Offset="0,4" Opacity="0.4" Radius="8"/>
+                    </Button.Shadow>
+                </Button>
+            </Grid>
+        </Frame>
 
-                            <Label Text="{Binding Nombre}" FontAttributes="Bold" FontSize="18"/>
-                            <Label Text="{Binding Descripcion}" FontSize="14"/>
-                            <Label Text="{Binding FechaVisita, StringFormat='Fecha: {0:dd/MM/yyyy}'}" FontSize="12" TextColor="Gray"/>
-                            <StackLayout Orientation="Horizontal" HorizontalOptions="Center" Spacing="10">
-                                <Button Text="Editar" Clicked="EditarLugar_Clicked" CommandParameter="{Binding .}"/>
-                                <Button Text="Eliminar" Clicked="EliminarLugar_Clicked" CommandParameter="{Binding .}"/>
+        <!-- BARRA DE BÚSQUEDA CON ESTILO PREMIUM -->
+        <Frame Grid.Row="1"
+               CornerRadius="20" 
+               BackgroundColor="#1E293B" 
+               Padding="15,12"
+               Margin="20,15,20,20"
+               HasShadow="True">
+            <Frame.Shadow>
+                <Shadow Brush="#000000" Offset="0,3" Opacity="0.2" Radius="8"/>
+            </Frame.Shadow>
+
+            <SearchBar x:Name="searchBar"
+                       Placeholder="🔍 Descubre tus lugares..."
+                       TextColor="White"
+                       PlaceholderColor="#94A3B8"
+                       BackgroundColor="Transparent"
+                       FontSize="16"
+                       TextChanged="SearchBar_TextChanged"
+                       HorizontalOptions="Fill"/>
+        </Frame>
+
+        <!-- CONTENIDO PRINCIPAL -->
+        <ScrollView Grid.Row="2">
+            <StackLayout Padding="20,0,20,20" Spacing="25">
+
+                <!-- HERO SECTION MEJORADO -->
+                <StackLayout Padding="0,10,0,15" Spacing="12">
+                    <Label Text="Descubre"
+                           FontSize="32"
+                           TextColor="White"
+                           FontAttributes="Bold"
+                           HorizontalOptions="Center"/>
+
+                    <Label Text="Explora los lugares que han marcado tu viaje"
+                           FontSize="18"
+                           TextColor="#94A3B8"
+                           HorizontalOptions="Center"/>
+                </StackLayout>
+
+                <!-- TARJETAS PREMIUM 3 POR FILA -->
+                <CollectionView x:Name="lugaresCollectionView"
+                                SelectionMode="None">
+                    <CollectionView.ItemsLayout>
+                        <GridItemsLayout Orientation="Vertical"
+                                         Span="3"
+                                         HorizontalItemSpacing="15"
+                                         VerticalItemSpacing="15"/>
+                    </CollectionView.ItemsLayout>
+
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Frame BackgroundColor="#1E293B"
+                                   CornerRadius="20"
+                                   HasShadow="True"
+                                   Padding="0"
+                                   BorderColor="#334155">
+                                <Frame.Shadow>
+                                    <Shadow Brush="#000000" Offset="0,8" Opacity="0.25" Radius="12"/>
+                                </Frame.Shadow>
+
+                                <Grid RowDefinitions="140, Auto, Auto">
+
+                                    <!-- IMAGEN CON OVERLAY GRADIENTE -->
+                                    <Grid Grid.Row="0">
+                                        <Image Source="{Binding ImagenUrl}"
+                                               Aspect="AspectFill"
+                                               HeightRequest="140"/>
+                                        <BoxView Color="#000000" Opacity="0.4"/>
+
+                                        <!-- GRADIENTE EN PARTE INFERIOR -->
+                                        <BoxView VerticalOptions="End"
+                                                 HeightRequest="60"
+                                                 Opacity="0.6">
+                                            <BoxView.Background>
+                                                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                                    <GradientStop Color="Transparent" Offset="0"/>
+                                                    <GradientStop Color="#000000" Offset="1"/>
+                                                </LinearGradientBrush>
+                                            </BoxView.Background>
+                                        </BoxView>
+
+                                        <!-- TEXTO SOBRE IMAGEN -->
+                                        <StackLayout VerticalOptions="End"
+                                                     HorizontalOptions="Start"
+                                                     Margin="15,0,15,15"
+                                                     Spacing="4">
+                                            <Label Text="{Binding Nombre}"
+                                                   FontAttributes="Bold"
+                                                   FontSize="16"
+                                                   TextColor="White"
+                                                   LineBreakMode="TailTruncation"
+                                                   MaxLines="1"/>
+                                            <Label Text="{Binding FechaVisita, StringFormat='{0:dd MMM yyyy}'}"
+                                                   FontSize="12"
+                                                   TextColor="#E2E8F0"
+                                                   Opacity="0.9"/>
+                                        </StackLayout>
+
+                                        <!-- BADGE DE RECOMENDADO -->
+                                        <Frame CornerRadius="12"
+                                               BackgroundColor="#10B981"
+                                               Padding="8,4"
+                                               HasShadow="True"
+                                               HorizontalOptions="End"
+                                               VerticalOptions="Start"
+                                               Margin="10,10,10,0">
+                                            <Frame.Shadow>
+                                                <Shadow Brush="#10B981" Offset="0,2" Opacity="0.3" Radius="4"/>
+                                            </Frame.Shadow>
+                                            <Label Text="⭐ Recomendado"
+                                                   FontSize="10"
+                                                   TextColor="White"
+                                                   FontAttributes="Bold"/>
+                                        </Frame>
+                                    </Grid>
+
+                                    <!-- DESCRIPCIÓN -->
+                                    <StackLayout Grid.Row="1"
+                                                 Padding="15,12,15,8"
+                                                 Spacing="6">
+                                        <Label Text="{Binding Descripcion}"
+                                               FontSize="13"
+                                               TextColor="#CBD5E1"
+                                               LineBreakMode="TailTruncation"
+                                               MaxLines="3"/>
+                                    </StackLayout>
+
+                                    <!-- BOTONES ELEGANTES -->
+                                    <Grid Grid.Row="2"
+                                          Padding="15,0,15,15"
+                                          ColumnDefinitions="*, Auto"
+                                          ColumnSpacing="10">
+
+                                        <!-- PRECIO O INFORMACIÓN ADICIONAL -->
+                                        <StackLayout Orientation="Horizontal" 
+                                                     Spacing="4"
+                                                     VerticalOptions="Center">
+                                            <Label Text="📍"
+                                                   FontSize="12"
+                                                   TextColor="#6366F1"/>
+                                            <Label Text="Experiencia única"
+                                                   FontSize="12"
+                                                   TextColor="#94A3B8"/>
+                                        </StackLayout>
+
+                                        <!-- BOTONES DE ACCIÓN -->
+                                        <StackLayout Grid.Column="1" 
+                                                     Orientation="Horizontal" 
+                                                     Spacing="8">
+                                            <Button Text="✏️"
+                                                    BackgroundColor="#334155"
+                                                    TextColor="#E2E8F0"
+                                                    CornerRadius="10"
+                                                    WidthRequest="40"
+                                                    HeightRequest="36"
+                                                    FontSize="14"
+                                                    Clicked="EditarLugar_Clicked"
+                                                    CommandParameter="{Binding .}">
+                                                <Button.Shadow>
+                                                    <Shadow Brush="#000000" Offset="0,2" Opacity="0.2" Radius="4"/>
+                                                </Button.Shadow>
+                                            </Button>
+
+                                            <Button Text="🗑️"
+                                                    BackgroundColor="#334155"
+                                                    TextColor="#EF4444"
+                                                    CornerRadius="10"
+                                                    WidthRequest="40"
+                                                    HeightRequest="36"
+                                                    FontSize="14"
+                                                    Clicked="EliminarLugar_Clicked"
+                                                    CommandParameter="{Binding .}">
+                                                <Button.Shadow>
+                                                    <Shadow Brush="#000000" Offset="0,2" Opacity="0.2" Radius="4"/>
+                                                </Button.Shadow>
+                                            </Button>
+                                        </StackLayout>
+                                    </Grid>
+                                </Grid>
+                            </Frame>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+
+                    <!-- ESTADO VACÍO PREMIUM -->
+                    <CollectionView.EmptyView>
+                        <StackLayout VerticalOptions="Center"
+                                     HorizontalOptions="Center"
+                                     Padding="40"
+                                     Spacing="30">
+                            <Frame CornerRadius="80"
+                                   BackgroundColor="#1E293B"
+                                   Padding="35"
+                                   WidthRequest="160"
+                                   HeightRequest="160"
+                                   HasShadow="True">
+                                <Frame.Shadow>
+                                    <Shadow Brush="#000000" Offset="0,10" Opacity="0.3" Radius="15"/>
+                                </Frame.Shadow>
+                                <Label Text="🌊"
+                                       FontSize="60"
+                                       HorizontalOptions="Center"
+                                       VerticalOptions="Center"/>
+                            </Frame>
+
+                            <StackLayout Spacing="15">
+                                <Label Text="Tu aventura comienza aquí"
+                                       FontSize="24"
+                                       TextColor="White"
+                                       FontAttributes="Bold"
+                                       HorizontalOptions="Center"/>
+                                <Label Text="Crea tu primer recuerdo de viaje y comienza a explorar el mundo"
+                                       FontSize="16"
+                                       TextColor="#94A3B8"
+                                       HorizontalOptions="Center"
+                                       HorizontalTextAlignment="Center"/>
                             </StackLayout>
+
+                            <Button Text="Crear primer destino"
+                                    BackgroundColor="#6366F1"
+                                    TextColor="White"
+                                    CornerRadius="25"
+                                    Padding="40,15"
+                                    FontSize="16"
+                                    FontAttributes="Bold"
+                                    Clicked="AgregarLugar_Clicked"
+                                    HorizontalOptions="Center">
+                                <Button.Shadow>
+                                    <Shadow Brush="#6366F1" Offset="0,6" Opacity="0.4" Radius="10"/>
+                                </Button.Shadow>
+                            </Button>
                         </StackLayout>
-                    </Frame>
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
-        </CollectionView>
-
-        <!-- Botón agregar fijo al final -->
-        <Button Text="Agregar nuevo lugar"
-                BackgroundColor="#2196F3"
-                TextColor="White"
-                Clicked="AgregarLugar_Clicked"
-                Grid.Row="2"/>
+                    </CollectionView.EmptyView>
+                </CollectionView>
+            </StackLayout>
+        </ScrollView>
     </Grid>
-
 </ContentPage>

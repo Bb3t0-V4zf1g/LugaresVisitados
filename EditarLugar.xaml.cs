@@ -12,8 +12,11 @@ namespace LugaresVisitados
             InitializeComponent();
             _httpClient = new HttpClient
             {
-                BaseAddress = new Uri("https://md1w2gfx-3000.usw3.devtunnels.ms/")
+                BaseAddress = new Uri("https://5qc0m05r-3000.usw3.devtunnels.ms/")
             };
+
+            // Suscribirse al evento de cambio de texto en la URL de imagen
+            imagenUrlEntry.TextChanged += OnImagenUrlChanged;
         }
 
         public int lugarId;
@@ -22,10 +25,10 @@ namespace LugaresVisitados
         {
             if (query.ContainsKey("id"))
             {
-                 lugarId = Convert.ToInt32(query["id"]);
+                lugarId = Convert.ToInt32(query["id"]);
             }
 
-            if(query.ContainsKey("nombre"))
+            if (query.ContainsKey("nombre"))
             {
                 nombreEntry.Text = query["nombre"]?.ToString();
             }
@@ -46,28 +49,44 @@ namespace LugaresVisitados
             if (query.ContainsKey("imagenUrl"))
             {
                 imagenUrlEntry.Text = query["imagenUrl"]?.ToString();
-            }
 
+                // Cargar imagen de vista previa si hay una URL
+                if (!string.IsNullOrWhiteSpace(imagenUrlEntry.Text) &&
+                    (imagenUrlEntry.Text.StartsWith("http://") || imagenUrlEntry.Text.StartsWith("https://")))
+                {
+                    previewImagen.Source = ImageSource.FromUri(new Uri(imagenUrlEntry.Text));
+                }
+            }
         }
 
+        private void OnImagenUrlChanged(object sender, TextChangedEventArgs e)
+        {
+            // Mostrar vista previa si hay una URL válida
+            if (!string.IsNullOrWhiteSpace(imagenUrlEntry.Text) &&
+                (imagenUrlEntry.Text.StartsWith("http://") || imagenUrlEntry.Text.StartsWith("https://")))
+            {
+                previewImagen.Source = ImageSource.FromUri(new Uri(imagenUrlEntry.Text));
+            }
+        }
 
         private async void Guardar_Clicked(object sender, EventArgs e)
-        { 
+        {
             try
             {
-
-                if(string.IsNullOrWhiteSpace(nombreEntry.Text) ||
+                if (string.IsNullOrWhiteSpace(nombreEntry.Text) ||
                     string.IsNullOrWhiteSpace(descripcionEntry.Text) ||
                     string.IsNullOrWhiteSpace(imagenUrlEntry.Text))
                 {
                     await DisplayAlert("Error", "Todos los campos son obligatorios", "OK");
                     return;
                 }
-                if(fechaVisitaPicker.Date > DateTime.Today)
+
+                if (fechaVisitaPicker.Date > DateTime.Today)
                 {
                     await DisplayAlert("Error", "La fecha de visita no puede ser posterior a hoy.", "OK");
                     return;
                 }
+
                 var response = await _httpClient.GetAsync($"editar?id={lugarId}" +
                     $"&nombre={Uri.EscapeDataString(nombreEntry.Text)}" +
                     $"&descripcion={Uri.EscapeDataString(descripcionEntry.Text)}" +
@@ -96,4 +115,3 @@ namespace LugaresVisitados
         }
     }
 }
-

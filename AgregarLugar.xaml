@@ -2,24 +2,209 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="LugaresVisitados.AgregarLugar"
-             Title="Agregar Lugar">
-    <ScrollView>
-        <VerticalStackLayout Padding="15" Spacing="10">
-            <Label Text="Nombre del lugar:" FontAttributes="Bold"/>
-            <Entry x:Name="nombre" Keyboard="Text" Placeholder="Ingrese el nombre del lugar"/>
+             Title="Agregar Lugar"
+             BackgroundColor="#0F172A">
 
-            <Label Text="Descripción:" FontAttributes="Bold"/>
-            <Editor x:Name="descripcion" HeightRequest="100" 
-                   Placeholder="Describa el lugar visitado" AutoSize="TextChanges"/>
+    <Grid RowDefinitions="Auto, *">
 
-            <Label Text="Fecha de visita:" FontAttributes="Bold"/>
-            <DatePicker x:Name="fechaVisita"/>
+        <!-- ENCABEZADO PREMIUM CON GRADIENTE (igual que MainPage) -->
+        <Frame Grid.Row="0" 
+               CornerRadius="0" 
+               Padding="20,10"
+               HeightRequest="90"
+               HasShadow="True"
+               BackgroundColor="#1E293B">
+            <Frame.Shadow>
+                <Shadow Brush="#000000" Offset="0,5" Opacity="0.3" Radius="10"/>
+            </Frame.Shadow>
 
-            <Label Text="URL de la imagen:" FontAttributes="Bold"/>
-            <Entry x:Name="imagenUrl" Keyboard="Url" Placeholder="https://ejemplo.com/imagen.jpg"/>
+            <Grid ColumnDefinitions="*, Auto" VerticalOptions="Center">
+                <StackLayout Orientation="Horizontal" Spacing="12" VerticalOptions="Center">
+                    <Label Text="🌎"
+                           FontSize="28"
+                           VerticalOptions="Center"/>
+                    <Label Text="Agregar Lugar"
+                           FontSize="24"
+                           TextColor="White"
+                           FontAttributes="Bold"
+                           VerticalOptions="Center"/>
+                </StackLayout>
 
-            <Button Text="Guardar" Clicked="Button_Clicked" CornerRadius="15"
-                    BackgroundColor="#2196F3" TextColor="White" Margin="0,20,0,0"/>
-        </VerticalStackLayout>
-    </ScrollView>
+                <Button Text="← Volver"
+                        BackgroundColor="#334155"
+                        TextColor="White"
+                        CornerRadius="25"
+                        Padding="25,12"
+                        FontSize="14"
+                        FontAttributes="Bold"
+                        Clicked="Volver_Clicked"
+                        Grid.Column="1">
+                    <Button.Shadow>
+                        <Shadow Brush="#334155" Offset="0,4" Opacity="0.4" Radius="8"/>
+                    </Button.Shadow>
+                </Button>
+            </Grid>
+        </Frame>
+
+        <!-- FORMULARIO CON ESTILO PREMIUM -->
+        <ScrollView Grid.Row="1">
+            <StackLayout Padding="20" Spacing="25">
+
+                <!-- TÍTULO SECCIÓN -->
+                <StackLayout Padding="0,10,0,15" Spacing="12">
+                    <Label Text="Nuevo Recuerdo"
+                           FontSize="28"
+                           TextColor="White"
+                           FontAttributes="Bold"
+                           HorizontalOptions="Center"/>
+
+                    <Label Text="Comparte los detalles de tu experiencia"
+                           FontSize="16"
+                           TextColor="#94A3B8"
+                           HorizontalOptions="Center"/>
+                </StackLayout>
+
+                <!-- CAMPO NOMBRE -->
+                <StackLayout Spacing="8">
+                    <Label Text="Nombre del lugar:" 
+                           FontSize="14"
+                           TextColor="#E2E8F0"
+                           FontAttributes="Bold"/>
+
+                    <Frame CornerRadius="15" 
+                           BackgroundColor="#1E293B" 
+                           Padding="0"
+                           HasShadow="True"
+                           BorderColor="#334155">
+                        <Frame.Shadow>
+                            <Shadow Brush="#000000" Offset="0,3" Opacity="0.2" Radius="8"/>
+                        </Frame.Shadow>
+                        <Entry x:Name="nombre" 
+                               Keyboard="Text" 
+                               Placeholder="Ingrese el nombre del lugar"
+                               PlaceholderColor="#94A3B8"
+                               TextColor="White"
+                               BackgroundColor="Transparent"
+                               Margin="15"
+                               ClearButtonVisibility="WhileEditing"/>
+                    </Frame>
+                </StackLayout>
+
+                <!-- CAMPO DESCRIPCIÓN -->
+                <StackLayout Spacing="8">
+                    <Label Text="Descripción:" 
+                           FontSize="14"
+                           TextColor="#E2E8F0"
+                           FontAttributes="Bold"/>
+
+                    <Frame CornerRadius="15" 
+                           BackgroundColor="#1E293B" 
+                           Padding="0"
+                           HasShadow="True"
+                           BorderColor="#334155">
+                        <Frame.Shadow>
+                            <Shadow Brush="#000000" Offset="0,3" Opacity="0.2" Radius="8"/>
+                        </Frame.Shadow>
+                        <Editor x:Name="descripcion" 
+                               HeightRequest="120" 
+                               Placeholder="Describa el lugar visitado" 
+                               AutoSize="TextChanges"
+                               PlaceholderColor="#94A3B8"
+                               TextColor="White"
+                               BackgroundColor="Transparent"
+                               Margin="15"/>
+                    </Frame>
+                </StackLayout>
+
+                <!-- CAMPO FECHA -->
+                <StackLayout Spacing="8">
+                    <Label Text="Fecha de visita:" 
+                           FontSize="14"
+                           TextColor="#E2E8F0"
+                           FontAttributes="Bold"/>
+
+                    <Frame CornerRadius="15" 
+                           BackgroundColor="#1E293B" 
+                           Padding="0"
+                           HasShadow="True"
+                           BorderColor="#334155">
+                        <Frame.Shadow>
+                            <Shadow Brush="#000000" Offset="0,3" Opacity="0.2" Radius="8"/>
+                        </Frame.Shadow>
+                        <DatePicker x:Name="fechaVisita"
+                                   TextColor="White"
+                                   BackgroundColor="Transparent"
+                                   HorizontalOptions="Fill"
+                                   Margin="10"/>
+                    </Frame>
+                </StackLayout>
+
+                <!-- CAMPO IMAGEN -->
+                <StackLayout Spacing="8">
+                    <Label Text="URL de la imagen:" 
+                           FontSize="14"
+                           TextColor="#E2E8F0"
+                           FontAttributes="Bold"/>
+
+                    <Frame CornerRadius="15" 
+                           BackgroundColor="#1E293B" 
+                           Padding="0"
+                           HasShadow="True"
+                           BorderColor="#334155">
+                        <Frame.Shadow>
+                            <Shadow Brush="#000000" Offset="0,3" Opacity="0.2" Radius="8"/>
+                        </Frame.Shadow>
+                        <Entry x:Name="imagenUrl" 
+                               Keyboard="Url" 
+                               Placeholder="https://ejemplo.com/imagen.jpg"
+                               PlaceholderColor="#94A3B8"
+                               TextColor="White"
+                               BackgroundColor="Transparent"
+                               Margin="15"
+                               ClearButtonVisibility="WhileEditing"/>
+                    </Frame>
+                </StackLayout>
+
+                <!-- BOTÓN GUARDAR CON ESTILO PREMIUM -->
+                <Button Text="💾 Guardar Lugar"
+                        Clicked="Button_Clicked" 
+                        CornerRadius="25"
+                        BackgroundColor="#6366F1"
+                        TextColor="White"
+                        FontSize="16"
+                        FontAttributes="Bold"
+                        HeightRequest="55"
+                        Margin="0,20">
+                    <Button.Shadow>
+                        <Shadow Brush="#6366F1" Offset="0,6" Opacity="0.4" Radius="10"/>
+                    </Button.Shadow>
+                </Button>
+
+                <!-- PREVIEW DE LA IMAGEN (CORREGIDO CON x:Name) -->
+                <StackLayout x:Name="previewContainer" 
+                             IsVisible="False"
+                             Spacing="10">
+                    <Label Text="Vista previa:" 
+                           FontSize="14"
+                           TextColor="#E2E8F0"
+                           FontAttributes="Bold"/>
+
+                    <Frame CornerRadius="15" 
+                           BackgroundColor="#1E293B" 
+                           Padding="0"
+                           HasShadow="True"
+                           BorderColor="#334155"
+                           HeightRequest="150">
+                        <Frame.Shadow>
+                            <Shadow Brush="#000000" Offset="0,3" Opacity="0.2" Radius="8"/>
+                        </Frame.Shadow>
+                        <Image x:Name="previewImage"
+                               Aspect="AspectFill"
+                               BackgroundColor="#1E293B"/>
+                    </Frame>
+                </StackLayout>
+
+            </StackLayout>
+        </ScrollView>
+    </Grid>
 </ContentPage>

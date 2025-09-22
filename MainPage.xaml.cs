@@ -13,7 +13,7 @@ namespace LugaresVisitados
             InitializeComponent();
             _httpClient = new HttpClient
             {
-                BaseAddress = new Uri("https://md1w2gfx-3000.usw3.devtunnels.ms/")
+                BaseAddress = new Uri("https://5qc0m05r-3000.usw3.devtunnels.ms/")
             };
             CargarLugares();
         }
